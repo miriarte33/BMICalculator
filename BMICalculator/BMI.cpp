@@ -1,61 +1,80 @@
 //
-//  BMI.cpp
+//
 //  BMICalculator
-//  Manrique Iriarte
-// 10/5/17
-// c++
+//
+//  Created by Manrique Iriarte on 10/5/17.
+// Updated 1/3/18.
+//  Copyright © 2017 Manrique Iriarte. All rights reserved.
+//
 
 #include <iostream>
-
 using namespace std;
 
 //Stores the users personal data
 class BMICalculator {
 public:
+    BMICalculator();
+    BMICalculator(int theFeet, int theInches, double theWeight);
+    void setFeet(int x);
+    void setInches(int x);
+    void setWeight(double x);
+    void setBMI();
+    int getFeet();
+    int getInches();
+    double getBMI();
+    double getWeight();
+    friend ostream& operator << (ostream& outs, const BMICalculator &arg);
+    friend istream& operator >> (istream & ins, BMICalculator &arg);
+private:
     int feet;
     int inches;
-    double weight;//in pounds
-    void output();//outputes the user's personal info
-    
-private:
+    double BMI;
+    double weight;
     double height();//converts the height to inches
     double convert_to_meters(); //converts the height from inches to meters
     double convert_to_kg();//converts the weight from pounds to kilograms
     double square_meters();//takes meters and squares it
-    double BMI_results();//calculates the users BMI
 };
 
 int main()
 {
-    BMICalculator userdata;//will be input by the users and will store it into the class
-    
+    BMICalculator userdata;
     cout << "Welcome to my BMI calculator program!"<< endl;
-    cout << "How tall are you? First, enter feet, then enter inches." << endl << "Feet: ";
-    cin >> userdata.feet;
-    cout << "Inches: ";
-    do {
-        cin >> userdata.inches;
-        
-        if (userdata.inches >=12|| userdata.inches <=0)
-        {
-            cout << "The number for inches must be between 0 and 12."<<endl<<"Enter again: ";
-        }
-    } while (userdata.inches >= 12 || userdata.inches <= 0);//ensures the user enters a valid answer
-    
-    cout << "How much do you weigh in pounds? Decimal values are OK." << endl;
-    cin >> userdata.weight;
-    
-    userdata.output();
+    cout << "Enter your data. First enter your height in feet. Then enter inches. Then enter your weight." << endl;
+    cin >> userdata;
+    cout << "Your BMI is " << userdata << endl;
     
     return 0;
 }
 
-void BMICalculator::output ()
+//operator overloading
+ostream& operator << (ostream& outs,  const BMICalculator &arg)
 {
-    //int userheight = height ();
-    cout << "You are "<< feet << "' " << inches << "'' " << endl << "You weigh " << weight << " pounds."<<endl << "Your BMI is " << BMI_results() <<" kilograms per meters squared."<<endl;
+    outs << arg.BMI;
+    
+    return outs;
 }
 
+istream& operator >> (istream& ins, BMICalculator &arg)
+{
+    ins >> arg.feet;
+    
+    do {
+        ins >> arg.inches;
+        if (arg.inches >=12|| arg.inches < 0)
+        {
+            cout << "The number for inches must be between 0 and 12."<<endl<<"Enter again: ";
+        }
+    } while (arg.inches >= 12 || arg.inches < 0);
+    
+    ins >> arg.weight;
+    
+    arg.setBMI();
+    
+    return ins;
+}
+
+//member functions
 double BMICalculator::height()
 {
     double height = (feet*12)+inches;//converts the height to inches
@@ -81,13 +100,63 @@ double BMICalculator::square_meters()
     return meters_squared;
 }
 
-double BMICalculator::BMI_results()
+//setters
+void BMICalculator::setFeet(int x)
 {
-    double BMI = convert_to_kg()/square_meters();
-    return BMI;
+    feet = x;
 }
 
+void BMICalculator::setInches(int x)
+{
+    inches = x;
+}
 
+void BMICalculator::setWeight(double x)
+{
+    weight = x;
+}
 
+void BMICalculator::setBMI()
+{
+    BMI = convert_to_kg()/square_meters();
+}
 
+//constructors
+BMICalculator::BMICalculator()
+{
+    feet = 6;
+    inches = 0;
+    weight = 175;
+    setBMI();
+}
+
+BMICalculator::BMICalculator(int theFeet, int theInches, double theWeight)
+{
+    feet = theFeet;
+    inches = theInches;
+    weight = theWeight;
+    setBMI();
+}
+
+//getters
+int BMICalculator::getFeet()
+{
+    return feet;
+}
+
+int BMICalculator::getInches()
+{
+    return inches;
+}
+
+double BMICalculator::getWeight()
+{
+    return weight;
+}
+
+double BMICalculator::getBMI()
+{
+    setBMI();
+    return BMI;
+}
 
